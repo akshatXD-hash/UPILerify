@@ -19,7 +19,9 @@ import {
   Sparkles,
   Zap,
   Smartphone,
-  Check
+  Check,
+  Key,
+  X
 } from 'lucide-react';
 import { BrandMarkSvg, BrandBackground } from '@/lib/brand';
 
@@ -63,9 +65,36 @@ export default function TestConsole() {
   // Live Logs & Event Stream
   const [logs, setLogs] = useState<Array<{ id: string; time: string; message: string; type: string }>>([]);
 
-  // Connect to SSE Stream
+  // API Key Configuration State & Persistence
+  const [apiKey, setApiKey] = useState('');
+  const [tempKey, setTempKey] = useState('');
+  const [showKeyModal, setShowKeyModal] = useState(false);
+
   useEffect(() => {
-    const eventSource = new EventSource('/api/events');
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('upilerify_api_key') || process.env.NEXT_PUBLIC_UPILERIFY_API_KEY || '';
+      setApiKey(stored);
+      setTempKey(stored);
+    }
+  }, []);
+
+  const saveApiKey = (newKey: string) => {
+    const trimmed = newKey.trim();
+    setApiKey(trimmed);
+    if (typeof window !== 'undefined') {
+      if (trimmed) {
+        localStorage.setItem('upilerify_api_key', trimmed);
+      } else {
+        localStorage.removeItem('upilerify_api_key');
+      }
+    }
+    setShowKeyModal(false);
+  };
+
+  // Connect to SSE Stream (authenticates via ?api_key= query param)
+  useEffect(() => {
+    const sseUrl = apiKey ? `/api/events?api_key=${encodeURIComponent(apiKey)}` : '/api/events';
+    const eventSource = new EventSource(sseUrl);
     
     eventSource.addEventListener('order_created', (e) => {
       const data = JSON.parse(e.data);
@@ -92,7 +121,7 @@ export default function TestConsole() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [apiKey]);
 
   const addLog = (message: string, type: string = 'info') => {
     const time = new Date().toLocaleTimeString();
@@ -103,9 +132,12 @@ export default function TestConsole() {
     if (e) e.preventDefault();
     setIsCreatingOrder(true);
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
       const res = await fetch('/api/orders/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           amount: parseFloat(amount),
           merchantUpiId: merchantUpi,
@@ -135,9 +167,12 @@ export default function TestConsole() {
     try {
       // SECURITY (Phase 3): credentials live only in server env vars — the
       // browser never sends (or sees) the mailbox address or app password.
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
       const res = await fetch('/api/imap/test-connection', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({}),
       });
       const data = await res.json();
@@ -157,9 +192,12 @@ export default function TestConsole() {
     e.preventDefault();
     if (!activeOrder) return;
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
       const res = await fetch('/api/verify-utr', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           orderId: activeOrder.id,
           utr: manualUtr,
@@ -167,8 +205,8 @@ export default function TestConsole() {
       });
       const data = await res.json();
       if (data.success) {
-        setUtrStatus('Payment verified successfully!');
-        setActiveOrder(data.order);
+        setUtrStatus(data.message || 'UTR submitted successfully!');
+        if (data.order) setActiveOrder(data.order);
       } else {
         setUtrStatus(`Failed: ${data.error}`);
       }
@@ -223,6 +261,22 @@ export default function TestConsole() {
 
             {/* Right Action Links */}
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setTempKey(apiKey);
+                  setShowKeyModal(true);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
+                  apiKey
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 shadow-xs'
+                    : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 animate-pulse shadow-xs'
+                }`}
+              >
+                <Key className="w-3.5 h-3.5" />
+                <span>{apiKey ? 'API Key Active' : 'Set API Key'}</span>
+              </button>
+
               <a
                 href="https://upilerify.online"
                 target="_blank"
@@ -640,6 +694,71 @@ export default function TestConsole() {
             UPIlerify Open-Source Starter Kit · Released under the MIT License · Made for Indian Developers & Founders
           </p>
         </footer>
+
+        {/* API Key Modal */}
+        {showKeyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200 p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-cyan-50 text-[#0066FF] flex items-center justify-center border border-cyan-200">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[#0A0F1D]">Console API Key</h3>
+                    <p className="text-[11px] text-slate-500 font-mono">Authentication for Local Console</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowKeyModal(false)}
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <p className="text-slate-600 leading-relaxed">
+                  Enter your <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 font-bold">UPILERIFY_API_KEY</code> from your <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800">.env.local</code> to authenticate requests from this test console.
+                </p>
+                <input
+                  type="password"
+                  value={tempKey}
+                  onChange={(e) => setTempKey(e.target.value)}
+                  placeholder="Paste your 32+ char UPILERIFY_API_KEY"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-[#0A0F1D] focus:outline-hidden focus:bg-white focus:border-[#0066FF] transition-all"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={() => saveApiKey('')}
+                  className="text-xs font-semibold text-rose-600 hover:underline cursor-pointer"
+                >
+                  Clear Key
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowKeyModal(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => saveApiKey(tempKey)}
+                    className="px-4 py-2 rounded-xl bg-[#0A0F1D] hover:bg-[#0066FF] text-white text-xs font-bold font-mono transition-colors cursor-pointer shadow-xs"
+                  >
+                    Save & Connect
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </BrandBackground>
     </div>
