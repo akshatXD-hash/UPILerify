@@ -1,7 +1,7 @@
 /**
  * UPIlerify Multi-Bank UPI Email Alert Parser
  * Extracts bank, 12-digit UTR/RRN, credit amount, sender name, account ending, and reference note
- * across 13+ Indian Banks, Wallets, and PSPs.
+ * across 16+ Indian Banks, Wallets, and PSPs.
  */
 
 export interface ParsedUPIAlert {
@@ -72,12 +72,20 @@ export function parseUPIEmail(
     detectedBank = 'PNB';
   } else if (/bank\s*of\s*baroda|bob/i.test(fullText)) {
     detectedBank = 'Bank of Baroda';
+  } else if (/canara|@cnrb/i.test(fullText)) {
+    detectedBank = 'Canara Bank';
+  } else if (/union\s*bank|@uboi/i.test(fullText)) {
+    detectedBank = 'Union Bank of India';
+  } else if (/federal\s*bank|@federal/i.test(fullText)) {
+    detectedBank = 'Federal Bank';
   }
 
   // 2. Extract Amount
   const amountPatterns = [
     /Amount\s*:\s*(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)/i,
     /(?:UPI Credit Alert|credited by|credited with|received|credited)\s*:\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /(?:A\/c\s+[x\d*]+\s+credited\s+(?:for|by|with)?)\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /credited\s+with\s*(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)/i,
     /(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)\s*(?:received|credited|has been credited)/i,
     /(?:credited\s+for|payment\s+of)\s*(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)/i,
     /(?:deposited\s+with|deposited\s+for)\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
@@ -99,6 +107,7 @@ export function parseUPIEmail(
   // 3. Extract 12-Digit UTR / RRN
   const utrPatterns = [
     /(?:UPI Reference Number\s*(?:\(RRN\))?|RRN|UPI Ref(?:erence)?\s*(?:No|Number)?|UTR(?:\s*Number)?|Ref\s*no\.?|Reference\s*ID)\s*[:=]\s*(\d{12})/i,
+    /(?:Txn\s*ID|Transaction\s*ID|UPI\s*Trans\s*ID|IMPS\s*Ref(?:\s*No)?)\s*[:=]?\s*(\d{12})/i,
     /(?:UPI\/|Ref:?\s*|RRN:?\s*)(\d{12})/i,
     /\b(\d{12})\b/, // Standalone 12 digits
   ];
