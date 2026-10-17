@@ -38,7 +38,7 @@ When your customer completes the payment, your bank sends an instant credit aler
 
 - 🚀 **0% Middleman Toll**: Direct P2P & merchant bank settlement without paying 2% + GST aggregator cuts.
 - ⚡ **Sub-2.8s Real-Time Verification**: High-velocity regex matching engine parses bank alert emails via Gmail TLS IMAP in real time.
-- 🏦 **13+ Indian Banks Supported**: Built-in pattern recognition for Kotak 811, HDFC Bank, ICICI Bank, SBI, Axis Bank, Paytm Payments Bank, PhonePe, Google Pay, CRED UPI, IndusInd, IDFC FIRST, PNB, and Bank of Baroda.
+- 🏦 **16+ Indian Banks Supported**: Built-in pattern recognition for Kotak 811, HDFC Bank, ICICI Bank, SBI, Axis Bank, Paytm Payments Bank, PhonePe, Google Pay, CRED UPI, IndusInd, IDFC FIRST, PNB, Bank of Baroda, Canara Bank, Union Bank of India, and Federal Bank.
 - 🛡️ **3-Tier Collision Prevention**:
   - **Tier 1 (Exact Remark Match)**: Matches order reference notes (e.g. `ORD-89F2A`).
   - **Tier 2 (Micro-Offset Algorithm)**: Dynamic micro-paisa allocation (e.g. `₹499.01`, `₹499.02`) guarantees collision immunity during concurrent checkouts.
