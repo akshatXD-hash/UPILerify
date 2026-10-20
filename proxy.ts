@@ -39,9 +39,14 @@ const SECURITY_HEADERS: Record<string, string> = {
  *  - GET /api/orders/<orderId>/status — polled by the customer checkout page
  *  - GET /pay/*                       — customer-facing checkout UI
  */
-const PUBLIC_GET_ROUTES: RegExp[] = [
-  /^\/api\/orders\/[^/]+\/status$/,
-  /^\/pay(\/|$)/,
+const PUBLIC_ROUTES: Array<{ pattern: RegExp; methods: string[] }> = [
+  { pattern: /^\/api\/orders\/[^/]+\/status$/, methods: ['GET', 'HEAD'] },
+  { pattern: /^\/api\/orders\/[^/]+\/claim-utr$/, methods: ['POST'] },
+  { pattern: /^\/pay(\/|$)/, methods: ['GET', 'HEAD'] },
+
+
+
+
 ];
 
 /** Internal Next.js assets that should never be intercepted. */
@@ -54,8 +59,8 @@ const SKIP_ROUTES: RegExp[] = [
 ];
 
 function isPublicRoute(pathname: string, method: string): boolean {
-  if (method !== 'GET' && method !== 'HEAD') return false;
-  return PUBLIC_GET_ROUTES.some((pattern) => pattern.test(pathname));
+
+  return PUBLIC_ROUTES.some((r) => r.methods.includes(method) && r.pattern.test(pathname));
 }
 
 function extractApiKey(req: NextRequest): string | null {

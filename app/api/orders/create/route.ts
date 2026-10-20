@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { orderManager } from '@/lib/engine/orderManager';
+import { MicroOffsetCapacityError } from '@/lib/engine/microOffsetManager';
 import { validateWebhookUrl } from '@/lib/security/urlValidator';
 
 export async function POST(req: NextRequest) {
@@ -56,6 +57,9 @@ export async function POST(req: NextRequest) {
       checkoutUrl: `/pay/${order.id}`,
     });
   } catch (err: any) {
+    if (err instanceof MicroOffsetCapacityError || err.name === 'MicroOffsetCapacityError') {
+      return NextResponse.json({ success: false, error: err.message }, { status: 429 });
+    }
     console.error('[API /api/orders/create] Error:', err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

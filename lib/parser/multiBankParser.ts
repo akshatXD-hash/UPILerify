@@ -20,7 +20,8 @@ export interface ParsedUPIAlert {
 export function parseUPIEmail(
   subject: string = '',
   body: string = '',
-  timestamp: number = Date.now()
+  timestamp: number = Date.now(),
+  bankHint?: string
 ): ParsedUPIAlert {
   // Strip HTML and clean whitespace
   const cleanBody = body
@@ -37,7 +38,7 @@ export function parseUPIEmail(
 
   const fullText = `${subject}\n${cleanBody}`;
 
-  let detectedBank = 'Generic UPI';
+  let detectedBank = bankHint || 'Generic UPI';
   let amount = 0;
   let utr = '';
   let sender = '';

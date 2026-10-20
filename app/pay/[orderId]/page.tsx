@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { CheckCircle2, Clock, ShieldCheck, Smartphone, ExternalLink, ArrowLeft } from 'lucide-react';
 import { BrandMarkSvg, BrandBackground } from '@/lib/brand';
+import { UtrClaimForm } from './components/UtrClaimForm';
 
 interface OrderState {
   id: string;
@@ -27,34 +28,36 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchOrder = React.useCallback(async () => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}/status`);
+      const data = await res.json();
+      if (data.success) {
+        setOrder(data.order);
+        return data.order;
+      } else {
+        setError(data.error || 'Order not found');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+    return null;
+  }, [orderId]);
+
   // Poll for status
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    const fetchOrder = async () => {
-      try {
-        const res = await fetch(`/api/orders/${orderId}/status`);
-        const data = await res.json();
-        if (data.success) {
-          setOrder(data.order);
-          if (data.order.status === 'VERIFIED') {
-            clearInterval(interval);
-          }
-        } else {
-          setError(data.error || 'Order not found');
-        }
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrder();
-    interval = setInterval(fetchOrder, 2500);
+    const interval = setInterval(async () => {
+      const latest = await fetchOrder();
+      if (latest && latest.status === 'VERIFIED') {
+        clearInterval(interval);
+      }
+    }, 2500);
 
     return () => clearInterval(interval);
-  }, [orderId]);
+  }, [fetchOrder]);
 
   if (loading) {
     return (
@@ -202,6 +205,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
                 </div>
                 <span className="font-mono font-bold text-amber-900">{order.refNote}</span>
               </div>
+
+              {/* Fallback UTR Submission Form */}
+              <UtrClaimForm orderId={order.id} onClaimed={fetchOrder} />
             </div>
           )}
 

@@ -7,6 +7,7 @@
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 import { parseUPIEmail, ParsedUPIAlert } from '../parser/multiBankParser';
+import { validateEmailSource } from '../security/emailAuthValidator';
 
 export interface IMAPConnectionConfig {
   email: string;
@@ -138,11 +139,20 @@ class ImapService {
             /upi|credited|received|payment|rrn|utr/i.test(body);
 
           if (isUpiCandidate) {
+            // SECURITY (Phase 1): Validate sender domain & cryptographic authenticity (DKIM/SPF)
+            const senderRaw = parsedMail?.from || message.envelope?.from;
+            const authResult = validateEmailSource(senderRaw, parsedMail?.headers);
+
+            if (!authResult.valid) {
+              console.warn(`[ImapService] Rejected unverified email alert: ${authResult.reason}`);
+              continue;
+            }
+
             const dateTimestamp = message.envelope?.date
               ? new Date(message.envelope.date).getTime()
               : Date.now();
 
-            const parsedAlert = parseUPIEmail(subject, body, dateTimestamp);
+            const parsedAlert = parseUPIEmail(subject, body, dateTimestamp, authResult.detectedBank);
 
             if (parsedAlert.isValid) {
               alerts.push(parsedAlert);
