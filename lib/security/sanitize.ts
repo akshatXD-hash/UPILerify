@@ -19,6 +19,7 @@ import { ParsedUPIAlert } from '../parser/multiBankParser';
 const SENSITIVE_KEYS = new Set([
   'customerEmail',
   'webhookUrl',
+  'redirectUrl',
   'metadata',
   'appPassword',
   'password',

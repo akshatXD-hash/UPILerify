@@ -32,6 +32,7 @@ export async function GET(
         matchedUtr: order.matchedUtr,
         matchedBank: order.matchedBank,
         matchTier: order.matchTier,
+        redirectUrl: order.redirectUrl,
       },
     });
   } catch (err: any) {

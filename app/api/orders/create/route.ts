@@ -2,11 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { orderManager } from '@/lib/engine/orderManager';
 import { MicroOffsetCapacityError } from '@/lib/engine/microOffsetManager';
 import { validateWebhookUrl } from '@/lib/security/urlValidator';
+import { isValidRedirectUrl } from '@/lib/payments/redirect';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { amount, merchantUpiId, merchantName, useMicroOffset, webhookUrl, customNote, customerEmail, metadata } = body;
+    const { amount, merchantUpiId, merchantName, useMicroOffset, webhookUrl, redirectUrl, customNote, customerEmail, metadata } = body;
+
+    if (redirectUrl !== undefined && !isValidRedirectUrl(redirectUrl)) {
+      return NextResponse.json(
+        { success: false, error: 'redirectUrl must be an absolute HTTP or HTTPS URL without credentials.' },
+        { status: 400 }
+      );
+    }
 
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       return NextResponse.json(
@@ -34,6 +42,7 @@ export async function POST(req: NextRequest) {
       merchantName,
       useMicroOffset: !!useMicroOffset,
       webhookUrl: effectiveWebhookUrl,
+      redirectUrl,
       customNote,
       customerEmail,
       metadata,
@@ -52,6 +61,7 @@ export async function POST(req: NextRequest) {
         status: order.status,
         createdAt: order.createdAt,
         expiresAt: order.expiresAt,
+        redirectUrl: order.redirectUrl,
       },
       upiIntentUri,
       checkoutUrl: `/pay/${order.id}`,
