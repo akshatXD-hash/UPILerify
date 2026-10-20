@@ -1,9 +1,11 @@
 <div align="center">
   <img src="public/UPIlerify-logo-white.svg#gh-dark-mode-only" alt="UPIlerify Logo" width="380" />
   <img src="public/UPIlerify-logo-black.svg#gh-light-mode-only" alt="UPIlerify Logo" width="380" />
-  
+
   <p align="center">
-    <strong>The Open-Source, Zero-Fee UPI Payment Verification Engine for Next.js & Node.js</strong>
+    <strong>Get paid in UPI for your code, course, plugin or template. No gateway, no fees.</strong>
+    <br/>
+    The open-source, self-hosted UPI payment verification kit for independent creators.
   </p>
 
   <p align="center">
@@ -12,19 +14,18 @@
     <a href="https://github.com/harshavarma02/upilerify/network/members"><img src="https://img.shields.io/github/forks/harshavarma02/upilerify?style=flat-square&color=blueviolet" alt="GitHub Forks" /></a>
     <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16%20(Turbopack)-black?style=flat-square&logo=next.js" alt="Next.js 16" /></a>
     <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-    <a href="https://www.upilerify.online"><img src="https://img.shields.io/badge/Fees-0%25%20Toll-10B981?style=flat-square" alt="0% Fees" /></a>
+    <a href="https://www.upilerify.online"><img src="https://img.shields.io/badge/Gateway%20Fees-0%25-10B981?style=flat-square" alt="0% Gateway Fees" /></a>
   </p>
 
   <p align="center">
-    <a href="https://vercel.com/new/clone?repository-url=https://github.com/harshavarma02/upilerify&env=DEFAULT_UPI_ID,DEFAULT_UPI_NAME&envDescription=Enter%20your%20destination%20UPI%20VPA%20and%20Merchant%20Name"><img src="https://vercel.com/button" alt="Deploy with Vercel"/></a>
     <a href="https://www.upilerify.online/#sandbox"><img src="https://img.shields.io/badge/⚡_Live_Sandbox-Try_Demo-0066FF?style=flat-square" alt="Live Demo" /></a>
     <a href="https://www.upilerify.online/tools"><img src="https://img.shields.io/badge/🛠️_Free_Tools-Open_Suite-00D2FF?style=flat-square" alt="Free Online Tools" /></a>
   </p>
 
   <p align="center">
-    <img src="public/demo.gif" alt="UPIlerify Live Checkout & Instant Bank Alert Verification Demo" width="100%" />
+    <img src="public/demo.gif" alt="UPIlerify live checkout and instant bank alert verification demo" width="100%" />
     <br/>
-    <a href="public/demo.mp4"><sub>▶ Click to watch full 1080p MP4 recording</sub></a>
+    <a href="public/demo.mp4"><sub>▶ Watch the full 1080p recording</sub></a>
   </p>
 </div>
 
@@ -32,142 +33,176 @@
 
 ## ⚡ What is UPIlerify?
 
-**UPIlerify** is a self-hostable, developer-first payment engine that eliminates the standard 2% aggregator toll on UPI transactions in India. 
+UPIlerify lets an independent creator accept UPI payments **straight into their own bank account** and know the moment a customer has paid, with no payment gateway in between.
 
-Instead of routing payments through third-party escrow gateways (Razorpay, Cashfree, PayU) that charge fees and enforce lengthy KYC approvals, UPIlerify generates **standard dynamic NPCI UPI Intent QR codes** that settle **100% directly into your personal or merchant bank account**.
+Your customer pays through a standard UPI QR or app link. Your bank emails a credit alert to your Gmail. UPIlerify reads that alert over TLS IMAP, matches the amount and 12-digit UTR to the order, and sends a signed webhook to your backend. That's your cue to unlock the download, send the license key or enroll the student.
 
-When your customer completes the payment, your bank sends an instant credit alert email to your Gmail inbox. UPIlerify's daemon parses this alert in **sub-2.8 seconds** via TLS IMAP, matches the 12-digit UTR, and dispatches a cryptographically signed HMAC-SHA256 webhook to your backend.
+Clone it, add your keys, call three endpoints, and you're selling.
 
----
+## 🎯 Perfect for
+
+- 👨‍💻 **Developers** selling a codebase, template, boilerplate or SaaS licence
+- 🎬 **Editors and designers** selling plugins, presets, LUTs or asset packs
+- 🎓 **Teachers and coaches** selling a course, a cohort seat or a PDF
+- ✍️ **Writers and indie makers** selling ebooks, newsletters or one-off services
+
+If you sell something digital to individual buyers and don't want a 2% cut, a gateway signup or a waiting period, this is for you.
 
 ## ✨ Features
 
-- 🚀 **0% Middleman Toll**: Direct P2P & merchant bank settlement without paying 2% + GST aggregator cuts.
-- ⚡ **Sub-2.8s Real-Time Verification**: High-velocity regex matching engine parses bank alert emails via Gmail TLS IMAP in real time.
-- 🏦 **16+ Indian Banks Supported**: Built-in pattern recognition for Kotak 811, HDFC Bank, ICICI Bank, SBI, Axis Bank, Paytm Payments Bank, PhonePe, Google Pay, CRED UPI, IndusInd, IDFC FIRST, PNB, Bank of Baroda, Canara Bank, Union Bank of India, and Federal Bank.
-- 🛡️ **3-Tier Collision Prevention**:
-  - **Tier 1 (Exact Remark Match)**: Matches order reference notes (e.g. `ORD-89F2A`).
-  - **Tier 2 (Micro-Offset Algorithm)**: Dynamic micro-paisa allocation (e.g. `₹499.01`, `₹499.02`) guarantees collision immunity during concurrent checkouts.
-  - **Tier 3 (Manual UTR Fallback)**: Customer can submit their 12-digit UTR with automatic double-spend / replay protection.
-- 🔒 **HMAC-SHA256 Signed Webhooks**: Dispatches verified events (`payment.verified`, `order.expired`) with timestamped HMAC signatures.
-- 📱 **Mobile-Optimized Checkout Page**: Drop-in customer payment screen (`/pay/[orderId]`) with 1-tap deep links to Google Pay, PhonePe, and Paytm.
-- 📊 **Interactive Developer Console**: Built-in test dashboard with real-time Server-Sent Events (SSE) stream, QR generator, and IMAP connection tester.
+- 🚀 **Zero gateway fees**: payments settle directly into your bank account.
+- 🧾 **Dynamic UPI QR and intent links**: one per order, with the amount and reference locked in.
+- 📧 **Automatic verification from bank alerts**: reads credit-alert emails from your Gmail over TLS IMAP and extracts amount and UTR.
+- 🏦 **16 banks and UPI apps recognized**: Kotak 811, HDFC, ICICI, SBI, Axis, Paytm Payments Bank, PhonePe, Google Pay, CRED, IndusInd, IDFC FIRST, PNB, Bank of Baroda, Canara, Union Bank of India and Federal Bank.
+- 🔀 **Micro-offset amounts**: tiny paisa differences (₹499.01, ₹499.02) help tell simultaneous checkouts apart.
+- 🔁 **UTR de-duplication**: a bank reference can only be used once.
+- 🔒 **HMAC-SHA256 signed webhooks**: `payment.verified` events your backend can authenticate.
+- 🛡️ **Secure by default**: API-key protected endpoints, rate limiting, SSRF-checked webhook URLs, and a server that refuses to start with weak secrets.
+- 📱 **Mobile checkout page**: `/pay/[orderId]` with a one-tap UPI link.
+- 📊 **Developer console**: live event stream (SSE), QR preview and IMAP connection tester.
+- 💾 **SQLite persistence**: no external database to run.
 
----
-
-## 🏗️ Architecture & How It Works
+## 🏗️ How it works
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Customer
-    participant App as Your App / Frontend
-    participant UPIlerify as UPIlerify Engine
-    participant Bank as Indian Bank / UPI Network
-    participant Gmail as Your Gmail (TLS IMAP)
+    participant App as Your Site / Backend
+    participant UPIlerify as UPIlerify
+    participant Bank as Your Bank (UPI)
+    participant Gmail as Your Gmail (IMAP)
 
-    Customer->>App: Clicks "Pay ₹499 via UPI"
+    Customer->>App: Clicks "Buy for ₹499"
     App->>UPIlerify: POST /api/orders/create
-    UPIlerify-->>App: Returns Dynamic UPI Intent URI & QR
-    Customer->>Bank: Scans QR / Pays via GPay / PhonePe
-    Bank-->>Customer: Payment Successful
-    Bank->>Gmail: Dispatches Instant Credit Alert Email
-    UPIlerify->>Gmail: Fetches Alert via TLS IMAP (Port 993)
-    UPIlerify->>UPIlerify: MultiBankParser extracts UTR, Amount & Remark
-    UPIlerify->>UPIlerify: 3-Tier Matcher binds alert to Order
-    UPIlerify->>App: POST Webhook (payment.verified) [HMAC-SHA256]
-    App-->>Customer: Order Fulfilled & Activated
+    UPIlerify-->>App: UPI intent link, QR and checkout URL
+    Customer->>Bank: Pays via GPay / PhonePe / Paytm
+    Bank->>Gmail: Credit alert email
+    UPIlerify->>Gmail: Reads the alert over TLS IMAP
+    UPIlerify->>UPIlerify: Extracts UTR and amount, matches the order
+    UPIlerify->>App: Signed webhook (payment.verified)
+    App-->>Customer: Download link / licence key / course access
 ```
 
----
+## 📊 UPIlerify vs. a payment gateway
 
-## 📊 Comparison: UPIlerify vs. Traditional Gateways
-
-| Feature | **UPIlerify (OSS)** | **Razorpay / Cashfree / PayU** |
+| | **UPIlerify** | **Typical gateway** |
 | :--- | :--- | :--- |
-| **Transaction Fees** | **0.00% (Free Forever)** | 2.00% – 3.50% + GST |
-| **Settlement Time** | **Instant (Direct into Your Bank)** | T+2 Business Days |
-| **KYC / Documentation** | **0 Minutes (Any personal or current UPI ID)** | 3 – 7 Days corporate onboarding |
-| **Data Ownership** | **100% Self-Hosted & Private** | Third-party vendor lock-in |
-| **Setup Time** | **< 2 Minutes** | Days to weeks |
-| **Replay / Fraud Protection** | **3-Tier Collision Avoidance + UTR Dedup** | Proprietary risk engine |
+| **Fees** | **0% gateway fee** | Percentage fee + GST per transaction |
+| **Where money goes** | **Straight to your bank account** | Via the gateway, then settled to you |
+| **Signup** | **No gateway account or onboarding** | Business onboarding and verification |
+| **Data** | **Self-hosted, you own it** | Vendor-hosted |
+| **Setup** | **About 10 minutes** | Days to weeks |
 
----
+## 🛠️ Free online UPI tools
 
-## 🛠️ Free Online UPI Utilities
+Not ready to self-host? These free, in-browser tools at [upilerify.online](https://www.upilerify.online/tools) are useful for any UPI seller:
 
-Need to generate a payment QR, deep link, or test UPI parameters without installing the engine? Use our free, 100% in-browser developer & merchant tools at [upilerify.online](https://www.upilerify.online):
-
-| Utility | Description | Access |
+| Tool | What it does | |
 | :--- | :--- | :--- |
-| 🧮 **[UPI MDR Fee Calculator](https://www.upilerify.online/tools/upi-mdr-calculator)** | Calculate official 0.40% NPCI MDR fees (effective Oct 15, 2026) and sub-₹2k exemptions. | [**Open Tool →**](https://www.upilerify.online/tools/upi-mdr-calculator) |
-| 💰 **[UPI QR Code with Amount](https://www.upilerify.online/tools/upi-qr-code-with-amount)** | Generate fixed-amount payment QR codes that lock the invoice total upon scanning. | [**Open Tool →**](https://www.upilerify.online/tools/upi-qr-code-with-amount) |
-| 🏦 **[Bank Account to UPI QR](https://www.upilerify.online/tools/bank-account-to-upi-qr-code)** | Convert any Indian account number + IFSC directly into an NPCI QR (zero VPA required). | [**Open Tool →**](https://www.upilerify.online/tools/bank-account-to-upi-qr-code) |
-| 💬 **[WhatsApp UPI Payment Link](https://www.upilerify.online/tools/upi-link-generator)** | Create 1-click WhatsApp payment request links and itemized invoice messages. | [**Open Tool →**](https://www.upilerify.online/tools/upi-link-generator) |
-| ⚡ **[Dynamic UPI QR Generator](https://www.upilerify.online/tools/upi-qr-generator)** | Customizable payment QR generator with live preview and 1024px SVG/PNG download. | [**Open Tool →**](https://www.upilerify.online/tools/upi-qr-generator) |
-| 🔍 **[UPI Handles & Bank Lookup](https://www.upilerify.online/tools/upi-handles)** | Search 150+ PSP handles (@okaxis, @ybl, @oksbi, @ptyes) and find issuing banks. | [**Open Tool →**](https://www.upilerify.online/tools/upi-handles) |
-| 🛡️ **[QR Code to UPI ID Extractor](https://www.upilerify.online/tools/qr-code-to-upi-id)** | Upload or scan any QR code to decode parameters and check for phishing risks. | [**Open Tool →**](https://www.upilerify.online/tools/qr-code-to-upi-id) |
+| 🧮 **UPI MDR Fee Calculator** | Work out MDR fees and exemptions | [**Open →**](https://www.upilerify.online/tools/upi-mdr-calculator) |
+| 💰 **UPI QR Code with Amount** | Fixed-amount QR that locks the invoice total | [**Open →**](https://www.upilerify.online/tools/upi-qr-code-with-amount) |
+| 🏦 **Bank Account to UPI QR** | Turn account number + IFSC into a payable QR | [**Open →**](https://www.upilerify.online/tools/bank-account-to-upi-qr-code) |
+| 💬 **WhatsApp UPI Payment Link** | One-tap payment requests for WhatsApp | [**Open →**](https://www.upilerify.online/tools/upi-link-generator) |
+| ⚡ **Dynamic UPI QR Generator** | Custom QR with live preview, SVG/PNG download | [**Open →**](https://www.upilerify.online/tools/upi-qr-generator) |
+| 🔍 **UPI Handles & Bank Lookup** | Search 150+ handles and find the issuing bank | [**Open →**](https://www.upilerify.online/tools/upi-handles) |
+| 🛡️ **QR Code to UPI ID Extractor** | Decode any QR and check it for phishing risk | [**Open →**](https://www.upilerify.online/tools/qr-code-to-upi-id) |
 
-> 🔒 **100% Client-Side Privacy**: All tools run entirely in the browser. No banking credentials, amounts, or Virtual Payment Addresses are ever transmitted or stored on any server.
+> 🔒 All tools run entirely in your browser. No bank details, amounts or UPI IDs are sent to a server.
 
----
+## ⚡ Quickstart
 
-## ⚡ 60-Second Quickstart
+**You'll need:** Node.js 20.9+, a Gmail account with an [App Password](https://myaccount.google.com/apppasswords), a bank account that emails you on UPI credits, and a host with a persistent disk (any VPS works).
 
-### 1. Clone & Install
+### 1. Clone and install
+
 ```bash
 git clone https://github.com/harshavarma02/upilerify.git
 cd upilerify
 npm install
-```
-
-### 2. Configure Environment Variables
-Copy `.env.example` to `.env.local`:
-```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local`:
-```env
-# Your settlement UPI ID
-DEFAULT_UPI_ID=yourname@okaxis
-DEFAULT_UPI_NAME="My SaaS Business"
+### 2. Add your keys
 
-# Gmail IMAP Credentials (for automated verification)
-# Generate a 16-character App Password at: https://myaccount.google.com/apppasswords
+Generate two secrets:
+
+```bash
+openssl rand -hex 32   # use as UPILERIFY_API_KEY
+openssl rand -hex 32   # use as WEBHOOK_SECRET
+```
+
+Edit `.env.local`:
+
+```env
+# Protects your management endpoints (required)
+UPILERIFY_API_KEY=paste_generated_key_here
+
+# Signs your webhooks (required)
+WEBHOOK_SECRET=paste_generated_secret_here
+
+# Where you get paid
+DEFAULT_UPI_ID=yourname@okaxis
+DEFAULT_UPI_NAME="My Creator Shop"
+
+# Gmail with an App Password (used to read bank alerts)
 GMAIL_ADDRESS=yourbusiness@gmail.com
 GMAIL_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx
 
-# Target Webhook URL (where payment.verified events will be sent)
-WEBHOOK_URL=https://mysite.com/api/webhooks/upi
-WEBHOOK_SECRET=whsec_your_custom_secret_key
+# Where payment.verified events are sent
+WEBHOOK_URL=https://yoursite.com/api/webhooks/upi
 ```
 
-### 3. Run Developer Console
+<details>
+<summary>Optional variables</summary>
+
+| Variable | Purpose |
+| :--- | :--- |
+| `DATABASE_PATH` | SQLite file path (default `./data/upilerify.db`) |
+| `NEXT_PUBLIC_APP_URL` | App origin (default `http://localhost:3000`) |
+| `ALLOWED_DEV_ORIGINS` | Extra dev origins for Next.js |
+| `WEBHOOK_ALLOWED_HOSTS` | Only allow webhooks to these hosts |
+| `ALLOW_PRIVATE_WEBHOOK_TARGETS` | Dev only: allow webhooks to private addresses |
+
+</details>
+
+### 3. Run it
+
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to access the interactive **Merchant Test Console**.
 
----
+Open [http://localhost:3000](http://localhost:3000) for the developer console.
 
-## 💻 API Reference
+### 4. Schedule the inbox check
 
-### 1. Create a Payment Order
+Have a scheduler call the sync endpoint so new bank alerts are picked up:
+
+```cron
+* * * * * curl -s -X POST http://localhost:3000/api/imap/sync -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 💻 API
+
+Management endpoints use `Authorization: Bearer <UPILERIFY_API_KEY>`. The checkout page and order status are public.
+
+### Create an order
+
 ```bash
 curl -X POST http://localhost:3000/api/orders/create \
+  -H "Authorization: Bearer $UPILERIFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "amount": 499.00,
     "merchantUpiId": "merchant@upi",
-    "merchantName": "Acme SaaS",
+    "merchantName": "Acme Courses",
     "useMicroOffset": true,
-    "webhookUrl": "https://mysite.com/api/webhooks/upi",
-    "metadata": { "userId": "usr_8819" }
+    "metadata": { "userId": "usr_8819", "product": "react-masterclass" }
   }'
 ```
 
-**Response (`200 OK`)**:
+You get back the order, a `upiIntentUri` and a `checkoutUrl` to send your customer to:
+
 ```json
 {
   "success": true,
@@ -176,57 +211,34 @@ curl -X POST http://localhost:3000/api/orders/create \
     "amount": 499.00,
     "expectedAmount": 499.01,
     "refNote": "ORD-89F2A",
-    "merchantUpiId": "merchant@upi",
     "status": "PENDING",
-    "createdAt": 1724945800000,
     "expiresAt": 1724946400000
   },
-  "upiIntentUri": "upi://pay?pa=merchant%40upi&pn=Acme%20SaaS&am=499.01&cu=INR&tn=ORD-89F2A",
+  "upiIntentUri": "upi://pay?pa=merchant%40upi&pn=Acme%20Courses&am=499.01&cu=INR&tn=ORD-89F2A",
   "checkoutUrl": "/pay/ord_mte75uuw_sf0z"
 }
 ```
 
----
+### Check order status
 
-### 2. Poll Order Status
 ```bash
 curl http://localhost:3000/api/orders/ord_mte75uuw_sf0z/status
 ```
 
-**Response (`200 OK`)**:
-```json
-{
-  "success": true,
-  "status": "VERIFIED",
-  "order": {
-    "id": "ord_mte75uuw_sf0z",
-    "amount": 499.00,
-    "expectedAmount": 499.01,
-    "status": "VERIFIED",
-    "matchedUtr": "499012345678",
-    "matchedBank": "HDFC Bank",
-    "matchTier": "TIER_1_REMARK",
-    "verifiedAt": 1724945815000
-  }
-}
-```
+### Submit a UTR (customer reference)
 
----
-
-### 3. Manual 12-Digit UTR Fallback Verification
 ```bash
 curl -X POST http://localhost:3000/api/verify-utr \
+  -H "Authorization: Bearer $UPILERIFY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-    "orderId": "ord_mte75uuw_sf0z",
-    "utr": "499012345678"
-  }'
+  -d '{ "orderId": "ord_mte75uuw_sf0z", "utr": "499012345678" }'
 ```
 
----
+The order is marked `CLAIMED` and completes when the matching bank alert arrives.
 
-### 4. Signed Webhook Payload Format
-When a payment is verified, UPIlerify delivers this signed payload to your `WEBHOOK_URL`:
+## 🔔 Webhooks
+
+When a payment is verified, UPIlerify posts this to your `WEBHOOK_URL`:
 
 ```json
 {
@@ -236,40 +248,77 @@ When a payment is verified, UPIlerify delivers this signed payload to your `WEBH
     "id": "ord_mte75uuw_sf0z",
     "amount": 499.00,
     "expectedAmount": 499.01,
-    "refNote": "ORD-89F2A",
-    "merchantUpiId": "merchant@upi",
     "utr": "499012345678",
     "bank": "HDFC Bank",
-    "sender": "John Doe",
-    "verifiedAt": 1724945815000,
     "status": "VERIFIED",
-    "metadata": { "userId": "usr_8819" }
+    "metadata": { "userId": "usr_8819", "product": "react-masterclass" }
   }
 }
 ```
-* **Signature Header**: `X-Upilerify-Signature` contains the `HMAC-SHA256(payload, secret)`.
 
----
+Headers: `X-Upilerify-Signature` (hex HMAC-SHA256 of the raw body) and `X-Upilerify-Event`.
 
-## 🏦 Supported Indian Banks & PSPs
+Verify the signature on the **raw body** before you trust the event:
 
-| Bank / PSP | Email Sender / Domain | Remarks Extraction |
-| :--- | :--- | :--- |
-| **Kotak 811** | `alerts@kotak.com` | ✅ Yes |
-| **HDFC Bank** | `alerts@hdfcbank.net` | ✅ Yes |
-| **ICICI Bank** | `creditcards@icicibank.com` | ✅ Yes |
-| **State Bank of India (SBI)** | `alerts@sbi.co.in` | ✅ Yes |
-| **Axis Bank** | `alerts@axisbank.com` | ✅ Yes |
-| **Paytm Payments Bank** | `no-reply@paytm.com` | ✅ Yes |
-| **PhonePe** | `alerts@phonepe.com` | ✅ Yes |
-| **Google Pay** | `googlepay-noreply@google.com` | ✅ Yes |
-| **CRED UPI** | `alerts@cred.club` | ✅ Yes |
-| **IndusInd Bank** | `alerts@indusind.com` | ✅ Yes |
-| **IDFC FIRST Bank** | `alerts@idfcfirstbank.com` | ✅ Yes |
-| **Punjab National Bank (PNB)** | `alerts@pnb.co.in` | ✅ Yes |
-| **Bank of Baroda** | `alerts@bankofbaroda.com` | ✅ Yes |
+```js
+import crypto from 'node:crypto';
 
----
+app.post('/api/webhooks/upi', express.raw({ type: 'application/json' }), (req, res) => {
+  const received = req.headers['x-upilerify-signature'] || '';
+  const expected = crypto
+    .createHmac('sha256', process.env.WEBHOOK_SECRET)
+    .update(req.body)
+    .digest('hex');
+
+  const valid =
+    received.length === expected.length &&
+    crypto.timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+  if (!valid) return res.status(401).end();
+
+  const { event, timestamp, order } = JSON.parse(req.body.toString('utf8'));
+  if (Math.abs(Date.now() - timestamp) > 5 * 60 * 1000) return res.status(400).end(); // stale
+
+  if (event === 'payment.verified') {
+    // Unlock the download, send the licence key, enroll the student...
+  }
+  res.json({ received: true });
+});
+```
+
+For anything valuable, also confirm the amount and UTR against your bank statement.
+
+## 🗺️ Roadmap
+
+Contributions are very welcome on any of these. See the [open issues](https://github.com/harshavarma02/upilerify/issues) tagged `good first issue` and `help wanted`.
+
+- [ ] SMS and notification forwarding endpoint, so any Android SMS forwarder can verify payments
+- [ ] Embeddable checkout script with a modal and a one-line button
+- [ ] `@upilerify/node` SDK on npm
+- [ ] Ready-made "sell a course / plugin / codebase" example
+- [ ] Checkout branding: your logo and colours
+- [ ] Success, failed and expired pages with redirect URLs
+- [ ] More banks, per-bank parsers and test fixtures
+- [ ] Webhook retries with backoff
+- [ ] Docker and one-command VPS deployment
+- [ ] OpenAPI spec and webhook verification examples for Python, PHP and Go
+
+## 💡 Good to know
+
+UPIlerify is built for creators and small sellers collecting UPI payments into their own account. If you run a large or regulated business, use a licensed payment gateway. Check your bank's terms for the kind of account you collect on, and confirm important payments in your bank statement.
+
+## 💼 Need a hand?
+
+UPIlerify is free and open source under the [MIT License](LICENSE). If you'd like help setting it up or connecting it to your store, course platform or app:
+
+- 🛠️ Done-for-you deployment on a VPS
+- 🛍️ Shopify, WooCommerce and custom Next.js integration
+- 🏦 Custom bank and wallet parsers
+
+👉 [Book a setup call](https://www.upilerify.online/#contact) or email [`harshavarmabackup@gmail.com`](mailto:harshavarmabackup@gmail.com).
+
+## 🤝 Contributing
+
+Please read the [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md). Found a bank alert that isn't parsed correctly? Open an issue with an anonymized sample. That's one of the most useful contributions.
 
 ## 📈 Star History
 
@@ -277,27 +326,6 @@ When a payment is verified, UPIlerify delivers this signed payload to your `WEBH
 
 ---
 
-## 💼 Commercial Consulting & Custom Integration
-
-UPIlerify is **100% free and open-source software** under the [MIT License](LICENSE).
-
-Need help integrating UPIlerify into your custom tech stack, e-commerce store, mobile app, or high-throughput webhook pipelines?
-- 🛠️ **Done-For-You Deployment & Vercel / VPS Setup**
-- 🛍️ **Shopify, WooCommerce & Custom Next.js Integration**
-- 🏦 **Bespoke Bank / Wallet Parser Development & Multi-Mailbox Failover**
-- 🔒 **High-Availability Self-Hosted Architecture Consulting**
-
-👉 **[Book a Setup & Integration Call](https://www.upilerify.online/#contact)** or email [`harshavarmabackup@gmail.com`](mailto:harshavarmabackup@gmail.com).
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please review our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before opening a Pull Request.
-
----
-
-## 📄 License
-
-UPIlerify is open-source software licensed under the [MIT License](LICENSE).
-Released with ❤️ for Indian developers, indie hackers, and founders.
+<div align="center">
+  <sub>Building in public since August 2026 · Released under the MIT License · Made with ❤️ for Indian creators and indie developers</sub>
+</div>
