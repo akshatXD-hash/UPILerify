@@ -275,6 +275,19 @@ When a payment is verified, UPIlerify posts this to your `WEBHOOK_URL`:
 
 Headers: `X-Upilerify-Signature` (hex HMAC-SHA256 of the raw body) and `X-Upilerify-Event`.
 
+When the periodic cleanup transitions an overdue `PENDING` order to `EXPIRED`,
+it also sends a signed `order.expired` webhook to the order's saved webhook URL
+(the per-order `webhookUrl`, or `WEBHOOK_URL` captured when the order was created).
+The payload includes `event`, a millisecond `timestamp`, and `order` with `id`,
+`amount` (the base amount), `expectedAmount`, `refNote`, `merchantUpiId`,
+`status: "EXPIRED"`, and optional `metadata`. It uses the same signature scheme
+and `WEBHOOK_SECRET` as `payment.verified`.
+
+The order is saved as expired before delivery, and the existing `order_expired`
+SSE event is preserved. Delivery results are recorded in `webhookStatus` and the
+activity log. Later cleanup passes do not resend already-expired orders;
+automatic retries and durable delivery queues are not implemented.
+
 Verify the signature on the **raw body** before you trust the event:
 
 ```js
