@@ -22,7 +22,9 @@
   </p>
 
   <p align="center">
-    <video src="https://github.com/user-attachments/assets/5200b35e-e353-4e4c-9bdc-d07d9c145ba1" controls="controls" muted="muted" width="100%"></video>
+    <img src="public/demo.gif" alt="UPIlerify Live Checkout & Instant Bank Alert Verification Demo" width="100%" />
+    <br/>
+    <a href="public/demo.mp4"><sub>▶ Click to watch full 1080p MP4 recording</sub></a>
   </p>
 </div>
 
