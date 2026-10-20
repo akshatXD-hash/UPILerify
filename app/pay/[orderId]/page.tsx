@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState, use } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { CheckCircle2, Clock, ShieldCheck, Smartphone, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Clock, ShieldCheck, Smartphone, ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { BrandMarkSvg, BrandBackground } from '@/lib/brand';
 import { UtrClaimForm } from './components/UtrClaimForm';
 
@@ -23,6 +25,7 @@ interface OrderState {
 export default function CheckoutPage({ params }: { params: Promise<{ orderId: string }> }) {
   const resolvedParams = use(params);
   const orderId = resolvedParams.orderId;
+  const router = useRouter();
 
   const [order, setOrder] = useState<OrderState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,6 +36,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
       const res = await fetch(`/api/orders/${orderId}/status`);
       const data = await res.json();
       if (data.success) {
+        setError(null);
         setOrder(data.order);
         return data.order;
       } else {
@@ -46,20 +50,28 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
     return null;
   }, [orderId]);
 
-  // Poll for status
+  // Stop polling as soon as a terminal state is received.
   useEffect(() => {
-    fetchOrder();
-    const interval = setInterval(async () => {
+    let disposed = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
       const latest = await fetchOrder();
-      if (latest && latest.status === 'VERIFIED') {
-        clearInterval(interval);
+      if (disposed) return;
+      if (latest?.status === 'VERIFIED' || latest?.status === 'EXPIRED') {
+        const status = latest.status === 'VERIFIED' ? 'success' : 'expired';
+        router.replace(`/pay/${encodeURIComponent(orderId)}/${status}`);
+        return;
       }
-    }, 2500);
+      timer = setTimeout(poll, 2500);
+    };
+    poll();
+    return () => {
+      disposed = true;
+      clearTimeout(timer);
+    };
+  }, [fetchOrder, orderId, router]);
 
-    return () => clearInterval(interval);
-  }, [fetchOrder]);
-
-  if (loading) {
+  if (loading || order?.status === 'VERIFIED' || order?.status === 'EXPIRED') {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="w-8 h-8 rounded-full border-2 border-[#0066FF] border-t-transparent animate-spin" />
@@ -136,19 +148,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
             <p className="text-xs text-slate-500">Scan QR Code or Tap Button to Pay with Any UPI App</p>
           </div>
 
-          {order.status === 'VERIFIED' ? (
-            /* Verified State */
-            <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
-                <CheckCircle2 className="w-7 h-7" />
-              </div>
-              <h2 className="text-lg font-bold text-emerald-800">Payment Verified!</h2>
-              <p className="text-xs text-slate-600">
-                UTR: <span className="font-mono font-bold text-[#0A0F1D]">{order.matchedUtr || 'Auto-matched'}</span>
-              </p>
-              <p className="text-[11px] text-emerald-700 font-medium">100% direct settlement confirmed into merchant bank.</p>
-            </div>
-          ) : order.status === 'CLAIMED' ? (
+          {order.status === 'CLAIMED' ? (
             /* Claimed State — UTR received, awaiting real bank confirmation */
             <div className="space-y-6">
               <div className="p-6 rounded-2xl bg-sky-50 border border-sky-200 text-center space-y-3">
@@ -210,6 +210,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ orderId: st
               <UtrClaimForm orderId={order.id} onClaimed={fetchOrder} />
             </div>
           )}
+
+          <Link href={`/pay/${encodeURIComponent(order.id)}/cancelled`}
+            className="block text-center text-xs font-medium text-slate-500 hover:text-slate-900">
+            Cancel checkout
+          </Link>
 
           {/* Footer Security Badges */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-mono">

@@ -197,6 +197,7 @@ curl -X POST http://localhost:3000/api/orders/create \
     "merchantUpiId": "merchant@upi",
     "merchantName": "Acme Courses",
     "useMicroOffset": true,
+    "redirectUrl": "https://example.com/payment-complete?source=checkout",
     "metadata": { "userId": "usr_8819", "product": "react-masterclass" }
   }'
 ```
@@ -218,6 +219,22 @@ You get back the order, a `upiIntentUri` and a `checkoutUrl` to send your custom
   "checkoutUrl": "/pay/ord_mte75uuw_sf0z"
 }
 ```
+
+An optional `redirectUrl` must be an absolute HTTP(S) URL without credentials.
+After bank verification, checkout opens `/pay/[orderId]/success` and shows a
+3-second countdown before redirecting to the merchant with `order_id` and
+`status=VERIFIED`. Existing query parameters and URL fragments are preserved;
+any existing `order_id` or `status` values are replaced. Customers can also
+return immediately using the link. Without a redirect URL, they stay on the
+success page.
+
+Built-in result pages are available at `/pay/[orderId]/success`, `/failed`,
+`/expired`, and `/cancelled`. Verified and expired orders automatically open
+their corresponding page. Failed and cancelled pages offer a return to
+checkout; leaving checkout does not cancel a bank transfer or change the
+order's verification status. Opening a success URL does not verify an order.
+Always confirm payment on your backend using the status API or signed webhook,
+not the redirect query parameters.
 
 ### Check order status
 

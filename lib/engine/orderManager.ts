@@ -83,6 +83,7 @@ class OrderManager {
       createdAt: Date.now(),
       expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes TTL
       webhookUrl: params.webhookUrl || process.env.WEBHOOK_URL,
+      redirectUrl: params.redirectUrl,
       metadata: params.metadata,
       customerEmail: params.customerEmail,
     };

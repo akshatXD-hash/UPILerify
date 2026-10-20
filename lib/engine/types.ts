@@ -32,6 +32,7 @@ export interface PaymentOrder {
   matchedSender?: string;
   matchTier?: MatchTier;
   webhookUrl?: string;
+  redirectUrl?: string;
   webhookStatus?: 'PENDING' | 'SENT' | 'FAILED';
   metadata?: Record<string, any>;
   customerEmail?: string;
@@ -58,6 +59,7 @@ export interface CreateOrderParams {
   amount: number;
   useMicroOffset?: boolean;
   webhookUrl?: string;
+  redirectUrl?: string;
   metadata?: Record<string, any>;
   customNote?: string;
   customerEmail?: string;
