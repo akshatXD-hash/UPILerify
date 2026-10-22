@@ -275,6 +275,9 @@ When a payment is verified, UPIlerify posts this to your `WEBHOOK_URL`:
 
 Headers: `X-Upilerify-Signature` (hex HMAC-SHA256 of the raw body) and `X-Upilerify-Event`.
 
+For ready-to-copy Python (Flask), PHP, and Go receivers with constant-time
+signature comparison, see [Webhook verification examples](docs/webhooks.md).
+
 Verify the signature on the **raw body** before you trust the event:
 
 ```js
